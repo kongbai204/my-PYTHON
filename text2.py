@@ -2,6 +2,12 @@ import requests
 import datetime
 import os
 
+# 设置代理（根据你的 Mihomo 端口调整，默认为 7890 或 7897）
+PROXIES = {
+    "http": "http://127.0.0.1:7897",
+    "https": "http://127.0.0.1:7897"
+}
+
 # 世界气象组织（WMO）天气解释代码映射字典
 WEATHER_CODES = {
     0: "晴朗",
@@ -34,11 +40,12 @@ WEATHER_CODES = {
     99: "雷雨: 伴有强烈冰雹",
 }
 
+
 def get_city_coordinates(city_name):
     """调用 geocoding API 通过城市名字获取经纬度"""
     geocode_url = f"https://geocoding-api.open-meteo.com/v1/search?name={city_name}&count=1&language=zh"
     try:
-        response = requests.get(geocode_url, timeout=10)
+        response = requests.get(geocode_url, timeout=10, proxies=PROXIES)
         response.raise_for_status()
         data = response.json()
         if data.get("results"):
@@ -47,6 +54,7 @@ def get_city_coordinates(city_name):
     except Exception as e:
         print(f"获取城市坐标异常: {e}")
     return None, None, city_name
+
 
 def generate_weather_report(city_name):
     """获取天气信息并生成中文报告"""
@@ -61,7 +69,7 @@ def generate_weather_report(city_name):
                    f"&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m"
                    f"&timezone=auto")
     try:
-        response = requests.get(weather_url, timeout=10)
+        response = requests.get(weather_url, timeout=10, proxies=PROXIES)
         response.raise_for_status()
         data = response.json()
         
@@ -90,6 +98,7 @@ def generate_weather_report(city_name):
     except Exception as e:
         return f"获取【{official_name}】天气信息失败: {e}", False
 
+
 def save_report_to_file(city_name, report_text):
     """将报告保存到当前的 txt 文件中"""
     filename = f"{city_name}_天气报告.txt"
@@ -101,8 +110,9 @@ def save_report_to_file(city_name, report_text):
     except Exception as e:
         print(f"\n❌ 保存文件时发生错误: {e}")
 
+
 def main():
-    print("🌤️ 欢迎使用城市天气一键查询工具 🌤️")
+    print("🌤️  欢迎使用城市天气一键查询工具 🌤️")
     print("说明: 本工具基于免费公开接口 Open-Meteo 获取数据。")
     print("-" * 50)
     
@@ -121,6 +131,7 @@ def main():
     # 如果查询成功，则生成文件保存
     if success:
         save_report_to_file(city_input, report)
+
 
 if __name__ == "__main__":
     main()
