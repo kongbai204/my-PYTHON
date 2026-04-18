@@ -6,6 +6,24 @@
 如果用户输入11，程序应输出最小的由2个9组成的数能被 11整除以及99/11=9.0.
 """
 a=int(input("请输入奇数"))
-if a//5==0:
-    print("你是来找茬的把，非是5的倍数")
+i=1
+b=9
+if a%5==0:
+    print("你是来找茬的把，非得是5的倍数")
     exit()
+while b%a!=0:
+    i+=1
+    b=10**(i)-1
+print(b)
+
+#while True 更好
+"""
+            n=1
+            a=int(input("请输入奇数"))
+            while True:
+                b=int("9"*n)
+                n+=1
+                if b%a==0:
+                    print(b)
+                    break
+"""
